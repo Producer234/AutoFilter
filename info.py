@@ -4,14 +4,12 @@ from os import environ, getenv
 from Script import script
 
 # Utility functions
-id_pattern = re.compile(r'^-?\d+$')  # fixed regex to accept negative channel IDs
+id_pattern = re.compile(r'^.\d+$')
 
 def is_enabled(value, default):
-    if value is None:
-        return default
-    if str(value).lower() in ["true", "yes", "1", "enable", "y"]:
+    if value.lower() in ["true", "yes", "1", "enable", "y"]:
         return True
-    elif str(value).lower() in ["false", "no", "0", "disable", "n"]:
+    elif value.lower() in ["false", "no", "0", "disable", "n"]:
         return False
     else:
         return default
@@ -20,38 +18,39 @@ def is_enabled(value, default):
 # Bot Information Configuration
 # ============================
 SESSION = environ.get('SESSION', 'Media_search')
-API_ID = int(environ.get('API_ID', '0'))  # fix: default 0 to avoid crash
+API_ID = int(environ.get('API_ID', ''))
 API_HASH = environ.get('API_HASH', '')
-BOT_TOKEN = environ.get('BOT_TOKEN', '')
+BOT_TOKEN = environ.get('BOT_TOKEN', "")
 
 # ============================
 # Bot Settings Configuration
 # ============================
 CACHE_TIME = int(environ.get('CACHE_TIME', 300))
-USE_CAPTION_FILTER = is_enabled(environ.get('USE_CAPTION_FILTER', True), True)
+USE_CAPTION_FILTER = bool(environ.get('USE_CAPTION_FILTER', True))
 
-PICS = environ.get('PICS', 'https://envs.sh/WdA.jpg https://envs.sh/Wdj.jpg').split()
+PICS = (environ.get('PICS', 'https://envs.sh/WdA.jpg https://envs.sh/Wdj.jpg')).split()  # Sample pic
 NOR_IMG = environ.get("NOR_IMG", "https://envs.sh/Wdj.jpg")
 MELCOW_VID = environ.get("MELCOW_VID", "https://envs.sh/Wdj.jpg")
 SPELL_IMG = environ.get("SPELL_IMG", "https://envs.sh/Wdj.jpg")
-SUBSCRIPTION = environ.get('SUBSCRIPTION', 'https://envs.sh/Wdj.jpg')
-FSUB_PICS = environ.get('FSUB_PICS', 'https://envs.sh/Wdj.jpg').split()
+SUBSCRIPTION = (environ.get('SUBSCRIPTION', 'https://envs.sh/Wdj.jpg'))
+FSUB_PICS = (environ.get('FSUB_PICS', 'https://envs.sh/Wdj.jpg')).split()  # Fsub pic
 
 # ============================
 # Admin, Channels & Users Configuration
 # ============================
-ADMINS = [int(a) if id_pattern.search(a) else a for a in environ.get('ADMINS', '6497757690').split()]
-CHANNELS = [int(c) if id_pattern.search(c) else c for c in environ.get('CHANNELS', '-1001619818259').split()]
-LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1001868871195'))
-BIN_CHANNEL = int(environ.get('BIN_CHANNEL', '-1001868871195'))
-MOVIE_UPDATE_CHANNEL = int(environ.get('MOVIE_UPDATE_CHANNEL', '-1001868871195'))
-PREMIUM_LOGS = int(environ.get('PREMIUM_LOGS', '-1001868871195'))
-auth_channel = environ.get('AUTH_CHANNEL', '-1001572271892')
-DELETE_CHANNELS = [int(d) if id_pattern.search(d) else d for d in environ.get('DELETE_CHANNELS', '').split()]
-support_chat_id = environ.get('SUPPORT_CHAT_ID', '')
-reqst_channel = environ.get('REQST_CHANNEL_ID', '')
-AUTH_CHANNEL = [int(f) if id_pattern.search(f) else f for f in auth_channel.split()]
-MULTI_FSUB = [int(c) for c in environ.get('MULTI_FSUB', '-1001572271892').split() if id_pattern.search(c)]
+ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '6497757690').split()] # Replace with the actual admin ID(s) to add
+CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1001619818259').split()]  # Channel id for auto indexing (make sure bot is admin)
+LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1001868871195'))  # Log channel id (make sure bot is admin)
+BIN_CHANNEL = int(environ.get('BIN_CHANNEL', '-1001868871195'))  # Bin channel id (make sure bot is admin)
+MOVIE_UPDATE_CHANNEL = int(environ.get('MOVIE_UPDATE_CHANNEL', '-1001868871195'))  # Notification of those who verify will be sent to your channel
+PREMIUM_LOGS = int(environ.get('PREMIUM_LOGS', '-1001868871195'))  # Premium logs channel id
+auth_channel = environ.get('AUTH_CHANNEL', '-1001572271892')  # Channel/Group ID for force sub (make sure bot is admin)
+DELETE_CHANNELS = [int(dch) if id_pattern.search(dch) else dch for dch in environ.get('DELETE_CHANNELS', '').split()]
+support_chat_id = environ.get('SUPPORT_CHAT_ID', '')  # Support group id (make sure bot is admin)
+reqst_channel = environ.get('REQST_CHANNEL_ID', '')  # Request channel id (make sure bot is admin)
+AUTH_CHANNEL = [int(fch) if id_pattern.search(fch) else fch for fch in environ.get('AUTH_CHANNEL', '-1001572271892').split()]
+MULTI_FSUB = [int(channel_id) for channel_id in environ.get('MULTI_FSUB', '-1001572271892').split() if re.match(r'^-?\d+$', channel_id)]  # Channel for force sub (make sure bot is admin)
+
 
 # ============================
 # Payment Configuration
@@ -59,12 +58,11 @@ MULTI_FSUB = [int(c) for c in environ.get('MULTI_FSUB', '-1001572271892').split(
 QR_CODE = environ.get('QR_CODE', 'https://envs.sh/Wdj.jpg')
 OWNER_UPI_ID = environ.get('OWNER_UPI_ID', '@fam')
 
-# ============================
-# Auto approve / welcome text
-# ============================
-CHAT_ID = [int(c) if id_pattern.search(c) else c for c in environ.get('CHAT_ID', '').split()]
-TEXT = environ.get("APPROVED_WELCOME_TEXT", "<b>{mention},\n\nʏᴏᴜʀ ʀᴇǫᴜᴇsᴛ ᴛᴏ ᴊᴏɪɴ {title} ɪs ᴀᴘᴘʀᴏᴠᴇᴅ.\n‣ ᴘᴏᴡᴇʀᴇᴅ ʙʏ @codflix_bots</b>")
+#Auto approve 
+CHAT_ID = [int(app_chat_id) if id_pattern.search(app_chat_id) else app_chat_id for app_chat_id in environ.get('CHAT_ID', '').split()]
+TEXT = environ.get("APPROVED_WELCOME_TEXT", "<b>{mention},\n\nʏᴏᴜʀ ʀᴇǫᴜᴇsᴛ ᴛᴏ ᴊᴏɪɴ {title} ɪs ᴀᴘᴘʀᴏᴠᴇᴅ.\n\‣ ᴘᴏᴡᴇʀᴇᴅ ʙʏ @codflix_bots</b>")
 APPROVED = environ.get("APPROVED_WELCOME", "on").lower()
+
 
 # ============================
 # MongoDB Configuration
@@ -75,93 +73,130 @@ DATABASE_NAME = environ.get('DATABASE_NAME', "yato")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Lucy_files')
 
 # ============================
-# Movie & Verification Settings
+# Movie Notification & Update Settings
 # ============================
-MOVIE_UPDATE_NOTIFICATION = is_enabled(environ.get('MOVIE_UPDATE_NOTIFICATION', False), False)
-IMAGE_FETCH = is_enabled(environ.get('IMAGE_FETCH', True), True)
+MOVIE_UPDATE_NOTIFICATION = bool(environ.get('MOVIE_UPDATE_NOTIFICATION', False))  # Notification On (True) / Off (False)
+IMAGE_FETCH = bool(environ.get('IMAGE_FETCH', True))  # On (True) / Off (False)
 CAPTION_LANGUAGES = ["Bhojpuri", "Hindi", "Bengali", "Tamil", "English", "Bangla", "Telugu", "Malayalam", "Kannada", "Marathi", "Punjabi", "Bengoli", "Gujrati", "Korean", "Gujarati", "Spanish", "French", "German", "Chinese", "Arabic", "Portuguese", "Russian", "Japanese", "Odia", "Assamese", "Urdu"]
 
-VERIFY = is_enabled(environ.get('VERIFY', True), True)
-VERIFY_EXPIRE = int(environ.get('VERIFY_EXPIRE', 24))
-VERIFIED_LOG = int(environ.get('VERIFIED_LOG', '-1001868871195'))
-HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', 'https://t.me/How_to_Download_7x/30')
+# ============================
+# Verification Settings
+# ============================
+VERIFY = bool(environ.get('VERIFY', True))  # Verification On (True) / Off (False)
+VERIFY_EXPIRE = int(environ.get('VERIFY_EXPIRE', 24))  # Add time in hours
+VERIFIED_LOG = int(environ.get('VERIFIED_LOG', '-1001868871195'))  # Log channel id (make sure bot is admin)
+HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', 'https://t.me/How_to_Download_7x/30')  # How to open tutorial link for verification
 
 # ============================
-# Link Shortener
+# Link Shortener Configuration
 # ============================
-IS_SHORTLINK = is_enabled(environ.get('IS_SHORTLINK', False), False)
+IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', False))
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'inshorturl.com')
 SHORTLINK_API = environ.get('SHORTLINK_API', '')
-TUTORIAL = environ.get('TUTORIAL', 'https://t.me/How_to_Download_7x/30')
-IS_TUTORIAL = is_enabled(environ.get('IS_TUTORIAL', False), False)
+TUTORIAL = environ.get('TUTORIAL', 'https://t.me/How_to_Download_7x/30')  # Tutorial video link for opening shortlink website
+IS_TUTORIAL = bool(environ.get('IS_TUTORIAL', False))
 
 # ============================
-# Channels & Groups Links
+# Channel & Group Links Configuration
 # ============================
 GRP_LNK = environ.get('GRP_LNK', 'https://t.me/movie7xchat')
 CHNL_LNK = environ.get('CHNL_LNK', 'https://t.me/nova_flix')
 OWNER_LNK = environ.get('OWNER_LNK', 'https://t.me/cosmic_freak')
 MOVIE_UPDATE_CHANNEL_LNK = environ.get('MOVIE_UPDATE_CHANNEL_LNK', 'https://t.me/nova_flix')
-OWNERID = int(environ.get('OWNERID', '6497757690'))
+OWNERID = int(os.environ.get('OWNERID', '6497757690'))  # Replace with the actual admin ID
 
 # ============================
-# Users Configuration
+# User Configuration
 # ============================
-auth_users = [int(u) if id_pattern.search(u) else u for u in environ.get('AUTH_USERS', '').split()]
+auth_users = [int(user) if id_pattern.search(user) else user for user in environ.get('AUTH_USERS', '').split()]
 AUTH_USERS = (auth_users + ADMINS) if auth_users else []
-PREMIUM_USER = [int(u) if id_pattern.search(u) else u for u in environ.get('PREMIUM_USER', '').split()]
+PREMIUM_USER = [int(user) if id_pattern.search(user) else user for user in environ.get('PREMIUM_USER', '').split()]
 
 # ============================
-# Misc Configuration
+# Miscellaneous Configuration
 # ============================
-NO_RESULTS_MSG = is_enabled(environ.get("NO_RESULTS_MSG", True), True)
+NO_RESULTS_MSG = bool(environ.get("NO_RESULTS_MSG", True))  # True if you want no results messages in Log Channel
 MAX_B_TN = environ.get("MAX_B_TN", "5")
-MAX_BTN = is_enabled(environ.get('MAX_BTN', "True"), True)
+MAX_BTN = is_enabled((environ.get('MAX_BTN', "True")), True)
 PORT = environ.get("PORT", "8080")
 MSG_ALRT = environ.get('MSG_ALRT', 'sʜᴀʀᴇ ᴀɴᴅ sᴜᴘᴘᴏʀᴛ ᴜs')
-SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/codeflixsupport')
-P_TTI_SHOW_OFF = is_enabled(environ.get('P_TTI_SHOW_OFF', "False"), False)
-IMDB = is_enabled(environ.get('IMDB', "False"), False)
-AUTO_FFILTER = is_enabled(environ.get('AUTO_FFILTER', "True"), True)
-AUTO_DELETE = is_enabled(environ.get('AUTO_DELETE', "True"), True)
-DELETE_TIME = int(environ.get("DELETE_TIME", "300"))
-SINGLE_BUTTON = is_enabled(environ.get('SINGLE_BUTTON', "False"), False)
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/codeflixsupport')  # Support group link (make sure bot is admin)
+P_TTI_SHOW_OFF = is_enabled((environ.get('P_TTI_SHOW_OFF', "False")), False)
+IMDB = is_enabled((environ.get('IMDB', "False")), False)
+AUTO_FFILTER = is_enabled((environ.get('AUTO_FFILTER', "True")), True)
+AUTO_DELETE = is_enabled((environ.get('AUTO_DELETE', "True")), True)
+DELETE_TIME = int(environ.get("DELETE_TIME", "300"))  #  deletion time in seconds (default: 5 minutes). Adjust as per your needs.
+SINGLE_BUTTON = is_enabled((environ.get('SINGLE_BUTTON', "False")), False) # pm & Group button or link mode (True) / Off (False)
 CUSTOM_FILE_CAPTION = environ.get("CUSTOM_FILE_CAPTION", f"{script.CAPTION}")
 BATCH_FILE_CAPTION = environ.get("BATCH_FILE_CAPTION", CUSTOM_FILE_CAPTION)
 IMDB_TEMPLATE = environ.get("IMDB_TEMPLATE", f"{script.IMDB_TEMPLATE_TXT}")
 LONG_IMDB_DESCRIPTION = is_enabled(environ.get("LONG_IMDB_DESCRIPTION", "False"), False)
 SPELL_CHECK_REPLY = is_enabled(environ.get("SPELL_CHECK_REPLY", "True"), True)
+MAX_LIST_ELM = environ.get("MAX_LIST_ELM", None)
+INDEX_REQ_CHANNEL = int(environ.get('INDEX_REQ_CHANNEL', LOG_CHANNEL))
+FILE_STORE_CHANNEL = [int(ch) for ch in (environ.get('FILE_STORE_CHANNEL', '')).split()]
+MELCOW_NEW_USERS = is_enabled((environ.get('MELCOW_NEW_USERS', "False")), False)
+PROTECT_CONTENT = is_enabled((environ.get('PROTECT_CONTENT', "False")), True)
+PUBLIC_FILE_STORE = is_enabled((environ.get('PUBLIC_FILE_STORE', "True")), True)
+PM_SEARCH = bool(environ.get('PM_SEARCH', True))  # PM Search On (True) / Off (False)
+EMOJI_MODE = bool(environ.get('EMOJI_MODE', True))  # Emoji status On (True) / Off (False)
 
 # ============================
-# Fixing Auth Channel / Group IDs
+# Bot Configuration
 # ============================
+auth_grp = environ.get('AUTH_GROUP')
 AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
-AUTH_GROUPS = [int(g) for g in environ.get('AUTH_GROUP', '').split()] if environ.get('AUTH_GROUP') else None
+AUTH_GROUPS = [int(ch) for ch in auth_grp.split()] if auth_grp else None
 REQST_CHANNEL = int(reqst_channel) if reqst_channel and id_pattern.search(reqst_channel) else None
 SUPPORT_CHAT_ID = int(support_chat_id) if support_chat_id and id_pattern.search(support_chat_id) else None
+LANGUAGES = ["malayalam", "", "tamil", "", "english", "", "hindi", "", "telugu", "", "kannada", "", "gujarati", "", "marathi", "", "punjabi", ""]
+QUALITIES = ["360P", "", "480P", "", "720P", "", "1080P", "", "1440P", "", "2160P", ""]
+SEASONS = ["season 1" , "season 2" , "season 3" , "season 4", "season 5" , "season 6" , "season 7" , "season 8" , "season 9" , "season 10"]
 
 # ============================
-# Server & Web
+# Server & Web Configuration
 # ============================
-STREAM_MODE = is_enabled(environ.get('STREAM_MODE', True), True)
-NO_PORT = is_enabled(environ.get('NO_PORT', False), False)
-APP_NAME = getenv('APP_NAME', None)
-ON_HEROKU = 'DYNO' in environ
+
+STREAM_MODE = bool(environ.get('STREAM_MODE', True)) # Set Stream mode True or False
+
+NO_PORT = bool(environ.get('NO_PORT', False))
+
+# Heroku configuration
+if 'DYNO' in environ:
+    ON_HEROKU = True
+    APP_NAME = environ.get('APP_NAME', 'your-app-name')  # Added default value
+else:
+    ON_HEROKU = False
+    APP_NAME = None
+
 BIND_ADRESS = str(getenv('WEB_SERVER_BIND_ADDRESS', '0.0.0.0'))
-FQDN = str(getenv('FQDN', BIND_ADRESS)) if not ON_HEROKU else APP_NAME+'.herokuapp.com'
-HAS_SSL = is_enabled(getenv('HAS_SSL', True), True)
-URL = f"https://{FQDN}/" if HAS_SSL else f"http://{FQDN}/"
+
+# Fixed FQDN assignment with proper None handling
+if not ON_HEROKU:
+    FQDN = str(getenv('FQDN', BIND_ADRESS))
+else:
+    FQDN = f"{APP_NAME}.herokuapp.com" if APP_NAME else BIND_ADRESS
+
+URL = "https://{}/".format(FQDN) if ON_HEROKU or NO_PORT else "https://{}:{}/".format(FQDN, PORT)
 SLEEP_THRESHOLD = int(environ.get('SLEEP_THRESHOLD', '60'))
 WORKERS = int(environ.get('WORKERS', '4'))
 SESSION_NAME = str(environ.get('SESSION_NAME', 'codeflix'))
 MULTI_CLIENT = False
 name = str(environ.get('name', 'Deendayal'))
-PING_INTERVAL = int(environ.get("PING_INTERVAL", "1200"))
+PING_INTERVAL = int(environ.get("PING_INTERVAL", "1200"))  # 20 minutes
+
+HAS_SSL = bool(getenv('HAS_SSL', True))
+if HAS_SSL:
+    URL = "https://{}/".format(FQDN)
+else:
+    URL = "http://{}/".format(FQDN)
 
 # ============================
-# Reactions & Commands
+# Reactions Configuration
 # ============================
 REACTIONS = ["🤝", "😇", "🤗", "😍", "👍", "🎅", "😐", "🥰", "🤩", "😱", "🤣", "😘", "👏", "😛", "😈", "🎉", "⚡️", "🫡", "🤓", "😎", "🏆", "🔥", "🤭", "🌚", "🆒", "👻", "😁"]
+
+
 
 # ============================
 # Command admin
